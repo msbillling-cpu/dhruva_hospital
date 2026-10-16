@@ -891,6 +891,7 @@ export default function AppointmentModal({
           relation: relation,
           reason: reason.trim() || undefined,
           otp: otpCode.trim(),
+          frontendUrl: typeof window !== 'undefined' ? window.location.origin : undefined,
         }),
       });
 
@@ -1963,7 +1964,7 @@ export default function AppointmentModal({
               {/* Action Buttons - Sticky on Mobile, Static on Desktop */}
               <div className="space-y-2 pt-2 sticky bottom-0 bg-white/95 backdrop-blur-md -mx-4 px-4 py-2 sm:mx-0 sm:px-0 sm:static sm:bg-transparent z-20 border-t border-gray-100 sm:border-0">
                 <a
-                  href={confirmedPass.digitalPassUrl || `/pass/${confirmedPass.appointmentId || confirmedPass.id}`}
+                  href={`/pass/${encodeURIComponent(confirmedPass.appointmentId || confirmedPass.id)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full bg-[#006837] hover:bg-[#00522c] active:scale-[0.99] text-white py-2.5 sm:py-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-md transition-all text-center cursor-pointer"
