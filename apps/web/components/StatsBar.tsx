@@ -1,20 +1,22 @@
 'use client';
 import { Users, Baby, Award, HeartPulse } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
+import { useHospitalStats } from '@/lib/useHospitalStats';
 
 export default function StatsBar() {
   const { lang, t } = useLanguage();
+  const { patientsCount, ivfDeliveries } = useHospitalStats();
 
   const stats = [
     { 
       label: t('Happy Patients', 'సంతోషకరమైన రోగులు', 'खुश मरीज'), 
-      value: '15,000+', 
+      value: patientsCount, 
       icon: Users, 
       color: 'text-emerald-700' 
     },
     { 
       label: t('IVF Deliveries', 'IVF విజయాలు', 'आईवीएफ सफलताएं'), 
-      value: '500+', 
+      value: ivfDeliveries, 
       icon: HeartPulse, 
       color: 'text-[#9b7745]' 
     },

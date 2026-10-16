@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect, useMemo, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import {
   X,
   Calendar,
@@ -30,10 +31,13 @@ import {
   CheckSquare,
   ExternalLink,
   Camera,
+  Trash2,
 } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 import toast from 'react-hot-toast';
 import { checkImageClarity, extractTextFromAadhaar, parseAadhaarText } from '@/lib/aadhaarParser';
+import ImageCropperModal from './ImageCropperModal';
+import LiveCameraModal from './LiveCameraModal';
 
 interface Props {
   isOpen: boolean;
@@ -78,7 +82,7 @@ interface ConfirmedPass {
 }
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5003/api';
-const HOSPITAL_ID = process.env.NEXT_PUBLIC_HOSPITAL_ID || '69a7b003c84f8f6e66180872'; // Horizon Hospital for testing
+const HOSPITAL_ID = process.env.NEXT_PUBLIC_HOSPITAL_ID || '6a0850656ecbe4898e5d0dfe';
 
 export const VINAY_KUMAR_DOCTOR: DoctorOption = {
   doctorId: 'dr-m-vinay-kumar',
@@ -104,33 +108,34 @@ function isDoctorMatch(doc: DoctorOption, qId?: string, qName?: string): boolean
   // 1. Direct ID match
   if (qId && docIdLower === qIdLower) return true;
 
-  // 2. Doctor specific keyword matching
-  if ((qIdLower.includes('mounika') || qNameLower.includes('mounika')) &&
-      (docIdLower.includes('mounika') || docNameLower.includes('mounika'))) {
-    return true;
-  }
-  if ((qIdLower.includes('sudarshan') || qNameLower.includes('sudarshan')) &&
-      (docIdLower.includes('sudarshan') || docNameLower.includes('sudarshan'))) {
-    return true;
-  }
-  if ((qIdLower.includes('surya') || qNameLower.includes('surya')) &&
-      (docIdLower.includes('surya') || docNameLower.includes('surya'))) {
-    return true;
-  }
-  if ((qIdLower.includes('vinay') || qNameLower.includes('vinay')) &&
-      (docIdLower.includes('vinay') || docNameLower.includes('vinay'))) {
-    return true;
-  }
+  // 2. Doctor specific distinctive name matching (HIGH PRIORITY - Prevents false positive matching on shared surname 'Reddy')
+  const isQMounika = qIdLower.includes('mounika') || qNameLower.includes('mounika');
+  const isDocMounika = docIdLower.includes('mounika') || docNameLower.includes('mounika');
+  if (isQMounika || isDocMounika) return isQMounika && isDocMounika;
 
-  // 3. Clean word tokens match
-  const cleanQ = qNameLower.replace(/\b(dr|doctor)\b/gi, '').replace(/[^a-z0-9\s]/g, ' ').trim();
-  const cleanDoc = docNameLower.replace(/\b(dr|doctor)\b/gi, '').replace(/[^a-z0-9\s]/g, ' ').trim();
+  const isQSudarshan = qIdLower.includes('sudarshan') || qNameLower.includes('sudarshan');
+  const isDocSudarshan = docIdLower.includes('sudarshan') || docNameLower.includes('sudarshan');
+  if (isQSudarshan || isDocSudarshan) return isQSudarshan && isDocSudarshan;
 
-  const qTokens = cleanQ.split(/\s+/).filter(t => t.length > 2);
-  const docTokens = cleanDoc.split(/\s+/).filter(t => t.length > 2);
+  const isQSurya = qIdLower.includes('surya') || qNameLower.includes('surya');
+  const isDocSurya = docIdLower.includes('surya') || docNameLower.includes('surya');
+  if (isQSurya || isDocSurya) return isQSurya && isDocSurya;
 
-  if (qTokens.some(qt => docTokens.includes(qt))) return true;
-  if (cleanQ && cleanDoc && (cleanQ.includes(cleanDoc) || cleanDoc.includes(cleanQ))) return true;
+  const isQVinay = qIdLower.includes('vinay') || qNameLower.includes('vinay');
+  const isDocVinay = docIdLower.includes('vinay') || docNameLower.includes('vinay');
+  if (isQVinay || isDocVinay) return isQVinay && isDocVinay;
+
+  // 3. Fallback token match EXCLUDING common surnames/titles
+  const stopWords = new Set(['dr', 'doctor', 'reddy', 'kumar', 'rao', 'sharma', 'patel', 'singh', 'mr', 'mrs', 'ms']);
+  const cleanQ = qNameLower.replace(/[^a-z0-9\s]/g, ' ').trim();
+  const cleanDoc = docNameLower.replace(/[^a-z0-9\s]/g, ' ').trim();
+
+  const qTokens = cleanQ.split(/\s+/).filter(t => t.length > 2 && !stopWords.has(t));
+  const docTokens = cleanDoc.split(/\s+/).filter(t => t.length > 2 && !stopWords.has(t));
+
+  if (qTokens.length > 0 && docTokens.length > 0) {
+    if (qTokens.some(qt => docTokens.includes(qt))) return true;
+  }
 
   return false;
 }
@@ -146,6 +151,11 @@ export default function AppointmentModal({
   profilePic,
 }: Props) {
   const { lang, t } = useLanguage();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Multi-step modal state: 'form' | 'otp' | 'confirmed'
   const [step, setStep] = useState<'form' | 'otp' | 'confirmed'>('form');
@@ -194,6 +204,9 @@ export default function AppointmentModal({
     type: 'success' | 'warning' | 'error';
     message: string;
   } | null>(null);
+  const [cropperFile, setCropperFile] = useState<File | null>(null);
+  const [isCropperOpen, setIsCropperOpen] = useState(false);
+  const [isLiveCameraOpen, setIsLiveCameraOpen] = useState(false);
 
   // Live Doctor Availability & Dynamic Session state from Backend
   const [availability, setAvailability] = useState<{
@@ -325,7 +338,7 @@ export default function AppointmentModal({
     };
   }, [isOpen]);
 
-  // Priority 1: When modal opens or doctor props change, match and lock the requested doctor
+  // Authoritative doctor synchronization with loaded doctorsList
   useEffect(() => {
     if (!isOpen) return;
 
@@ -348,6 +361,7 @@ export default function AppointmentModal({
     tomorrow.setDate(tomorrow.getDate() + 1);
     setSelectedDate(tomorrow.toISOString().split('T')[0] || '');
 
+    // 1. If explicit doctorId or doctorName passed as props, ALWAYS match and lock that first
     if (doctorId || doctorName) {
       const match = doctorsList.find(d => isDoctorMatch(d, doctorId, doctorName));
       if (match) {
@@ -359,34 +373,17 @@ export default function AppointmentModal({
         return;
       }
 
-      // If not yet matched in doctorsList, set directly from passed props
+      // If not yet matched in doctorsList (still loading), temporarily use passed props
       if (doctorId) setSelectedDoctorId(doctorId);
       if (doctorName) setSelectedDoctorName(doctorName);
       if (specialty) setSelectedSpecialty(specialty);
       if (consultationFee) setSelectedFee(consultationFee);
       if (profilePic) setSelectedPic(profilePic);
-    }
-  }, [isOpen, doctorId, doctorName, specialty, consultationFee, profilePic, doctorsList]);
-
-  // Priority 2: Keep selected doctor synced with loaded doctorsList
-  useEffect(() => {
-    if (doctorsList.length === 0) return;
-
-    // 1. If doctor prop requested, prioritize that match
-    if (doctorId || doctorName) {
-      const match = doctorsList.find(d => isDoctorMatch(d, doctorId, doctorName));
-      if (match) {
-        setSelectedDoctorId(match.doctorId);
-        setSelectedDoctorName(match.doctorName);
-        setSelectedSpecialty(match.primarySpecialty || match.specialties?.[0] || specialty || 'General Physician');
-        setSelectedFee(match.consultationFee ?? (consultationFee || 300));
-        setSelectedPic(match.profilePic || profilePic || '');
-        return;
-      }
+      return;
     }
 
-    // 2. If a doctor is currently selected, keep its details up to date
-    if (selectedDoctorId) {
+    // 2. If a doctor is already selected by user, keep its live details updated
+    if (selectedDoctorId && doctorsList.length > 0) {
       const current = doctorsList.find(d => d.doctorId === selectedDoctorId || isDoctorMatch(d, selectedDoctorId, selectedDoctorName));
       if (current) {
         setSelectedDoctorId(current.doctorId);
@@ -398,16 +395,29 @@ export default function AppointmentModal({
       }
     }
 
-    // 3. Fallback only if no doctor is requested or selected
-    if (!doctorId && !doctorName && !selectedDoctorId && doctorsList[0]) {
+    // 3. Fallback only if no doctor was requested and none selected
+    if (!doctorId && !doctorName && !selectedDoctorId && doctorsList.length > 0) {
       const defaultDoc = doctorsList[0];
-      setSelectedDoctorId(defaultDoc.doctorId);
-      setSelectedDoctorName(defaultDoc.doctorName);
-      setSelectedSpecialty(defaultDoc.primarySpecialty || defaultDoc.specialties?.[0] || 'General Physician');
-      setSelectedFee(defaultDoc.consultationFee ?? 300);
-      setSelectedPic(defaultDoc.profilePic || '');
+      if (defaultDoc) {
+        setSelectedDoctorId(defaultDoc.doctorId);
+        setSelectedDoctorName(defaultDoc.doctorName);
+        setSelectedSpecialty(defaultDoc.primarySpecialty || defaultDoc.specialties?.[0] || 'General Physician');
+        setSelectedFee(defaultDoc.consultationFee ?? 300);
+        setSelectedPic(defaultDoc.profilePic || '');
+      }
     }
-  }, [doctorsList, doctorId, doctorName]);
+  }, [isOpen, doctorId, doctorName, specialty, consultationFee, profilePic, doctorsList]);
+
+  // Resolve matching doctor ID in doctorsList for dropdown selection (handles slugs & IDs)
+  const activeSelectedDoctorId = useMemo(() => {
+    if (!doctorsList || doctorsList.length === 0) return selectedDoctorId;
+    const matched = doctorsList.find(d => 
+      d.doctorId === selectedDoctorId || 
+      isDoctorMatch(d, selectedDoctorId, selectedDoctorName) ||
+      (doctorId ? isDoctorMatch(d, doctorId, doctorName) : false)
+    );
+    return matched ? matched.doctorId : selectedDoctorId;
+  }, [doctorsList, selectedDoctorId, selectedDoctorName, doctorId, doctorName]);
 
   // Sync selected doctor object if user chooses from dropdown
   const handleDoctorChange = (docId: string) => {
@@ -609,12 +619,59 @@ export default function AppointmentModal({
     }
   };
 
+  // Camera upload with Interactive Multi-Corner Cropper
+  const handleCameraTrigger = (e: React.MouseEvent) => {
+    // On desktop PCs/laptops, open the live browser webcam feed directly instead of triggering the OS file manager
+    const isMobile = typeof navigator !== 'undefined' && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (!isMobile) {
+      e.preventDefault();
+      setIsLiveCameraOpen(true);
+    }
+  };
+
+  const handleLiveCameraCapture = (file: File) => {
+    setIsLiveCameraOpen(false);
+    setCropperFile(file);
+    setIsCropperOpen(true);
+  };
+
+  const handleCameraCapture = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setCropperFile(file);
+      setIsCropperOpen(true);
+    }
+    e.target.value = '';
+  };
+
+  const handleCropComplete = async (croppedFile: File) => {
+    setIsCropperOpen(false);
+    setCropperFile(null);
+    await processAadhaarDocument(croppedFile);
+  };
+
+  // Direct File / PDF Upload (preserved and undisturbed)
   const handleAadhaarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       await processAadhaarDocument(file);
     }
     e.target.value = '';
+  };
+
+  // Clear / Reset all patient fields
+  const handleClearPatientFields = () => {
+    setFullName('');
+    setPhone('');
+    setDob('');
+    setAge('');
+    setAgeUnit('Years');
+    setGender('Male');
+    setFatherName('');
+    setAddress('');
+    setHonorific('Mr.');
+    setAadhaarScanStatus(null);
+    toast.success('All patient details cleared.');
   };
 
   // Cooldown countdown timer effect
@@ -811,7 +868,7 @@ export default function AppointmentModal({
       }
 
       // 2. Book Consultation with Phone+DOB Matching & Atomic Counter
-      const targetDocId = selectedDoctorId || (doctorsList[0]?.doctorId) || '69a7b665c84f8f6e66180df6';
+      const targetDocId = activeSelectedDoctorId || selectedDoctorId || (doctorsList[0]?.doctorId) || '6a085c7f12ee21a2a85b6557';
 
       const bookRes = await fetch(`${BACKEND_URL}/public/appointments/book`, {
         method: 'POST',
@@ -964,10 +1021,10 @@ export default function AppointmentModal({
     }
   };
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
 
-  return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-2 sm:p-5 overflow-hidden">
+  return createPortal(
+    <div className="fixed inset-0 z-[99999] flex items-center justify-center p-2 sm:p-5 overflow-hidden">
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-[#06140e]/80 backdrop-blur-md transition-opacity animate-fade-in"
@@ -1117,14 +1174,15 @@ export default function AppointmentModal({
                   </div>
 
                   <div className="shrink-0 flex items-center gap-2">
-                    {/* Native Mobile Camera Button */}
+                    {/* Native Mobile Camera Button (with Desktop Webcam Detection) */}
                     <label
+                      onClick={handleCameraTrigger}
                       className={`inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer select-none ${
                         isScanningAadhaar
                           ? 'bg-stone-200 text-stone-500 cursor-wait pointer-events-none'
                           : 'bg-[#0a2e22] text-[#c5a880] hover:bg-[#124232] hover:shadow-md active:scale-95'
                       }`}
-                      title="Use device camera to snap Aadhaar card"
+                      title="Use camera to snap Aadhaar card"
                     >
                       {isScanningAadhaar ? (
                         <>
@@ -1142,7 +1200,7 @@ export default function AppointmentModal({
                         accept="image/*"
                         capture="environment"
                         disabled={isScanningAadhaar}
-                        onChange={handleAadhaarUpload}
+                        onChange={handleCameraCapture}
                         className="hidden"
                       />
                     </label>
@@ -1166,6 +1224,19 @@ export default function AppointmentModal({
                         className="hidden"
                       />
                     </label>
+
+                    {/* Single Neat Dustbin Icon Clear Button (Mobile Responsive) */}
+                    {(fullName || phone || dob || address || fatherName || aadhaarScanStatus) && (
+                      <button
+                        type="button"
+                        onClick={handleClearPatientFields}
+                        className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center text-rose-600 bg-rose-50 border border-rose-200 hover:bg-rose-100 hover:border-rose-300 active:scale-95 transition-all shrink-0 shadow-xs cursor-pointer"
+                        title="Clear all entered patient fields"
+                        aria-label="Clear all entered patient fields"
+                      >
+                        <Trash2 size={15} />
+                      </button>
+                    )}
                   </div>
                 </div>
 
@@ -1191,16 +1262,23 @@ export default function AppointmentModal({
                   <div className="relative">
                     <User className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                     <select
-                      value={selectedDoctorId}
+                      value={activeSelectedDoctorId}
                       onChange={e => handleDoctorChange(e.target.value)}
                       className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-xs sm:text-sm font-semibold text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#9b7745]/30 focus:border-[#9b7745] transition-all"
                     >
                       {doctorsList.length > 0 ? (
-                        doctorsList.map(doc => (
-                          <option key={doc.doctorId} value={doc.doctorId}>
-                            {doc.doctorName} ({doc.primarySpecialty})
-                          </option>
-                        ))
+                        <>
+                          {doctorsList.map(doc => (
+                            <option key={doc.doctorId} value={doc.doctorId}>
+                              {doc.doctorName} ({doc.primarySpecialty})
+                            </option>
+                          ))}
+                          {activeSelectedDoctorId && !doctorsList.some(d => d.doctorId === activeSelectedDoctorId) && (
+                            <option value={activeSelectedDoctorId}>
+                              {selectedDoctorName || 'Selected Doctor'}
+                            </option>
+                          )}
+                        </>
                       ) : (
                         <option value={selectedDoctorId || 'default'}>
                           {selectedDoctorName || 'Dr. Ramesh (General Physician)'}
@@ -1917,6 +1995,25 @@ export default function AppointmentModal({
           )}
         </div>
       </div>
-    </div>
+
+      {/* Interactive Multi-Corner/Edge Aadhaar Photo Cropper Modal */}
+      <ImageCropperModal
+        file={cropperFile}
+        isOpen={isCropperOpen}
+        onClose={() => {
+          setIsCropperOpen(false);
+          setCropperFile(null);
+        }}
+        onCropComplete={handleCropComplete}
+      />
+
+      {/* Live Desktop Webcam Capture Modal */}
+      <LiveCameraModal
+        isOpen={isLiveCameraOpen}
+        onClose={() => setIsLiveCameraOpen(false)}
+        onCapture={handleLiveCameraCapture}
+      />
+    </div>,
+    document.body
   );
 }

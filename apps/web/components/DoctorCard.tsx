@@ -92,7 +92,7 @@ export default function DoctorCard({ doctor }: { doctor: Doctor }) {
       <AppointmentModal 
         isOpen={isModalOpen} 
         onClose={() => setModalOpen(false)} 
-        doctorId={doctor.id}
+        doctorId={doctor.doctorId || doctor.id}
         doctorName={doctor.name}
         specialty={doctor.specialization}
         profilePic={doctor.image}

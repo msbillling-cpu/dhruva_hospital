@@ -1,5 +1,6 @@
 export interface Doctor {
   id: string;
+  doctorId?: string;
   name: string;
   teluguName?: string;
   hindiName?: string;

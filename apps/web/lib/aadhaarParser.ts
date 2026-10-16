@@ -84,7 +84,7 @@ export async function checkImageClarity(file: File): Promise<{ isClear: boolean;
 
         const avgGradient = totalGradient / (count || 1);
 
-        if (avgGradient < 2.0) {
+        if (avgGradient < 1.0) {
           return resolve({
             isClear: false,
             warning: 'Image appears blurry or unreadable. Please upload a clearer photo or PDF.',
@@ -108,7 +108,7 @@ export async function checkImageClarity(file: File): Promise<{ isClear: boolean;
 
 /**
  * Preprocesses image on HTML5 canvas:
- * 1. Upscales narrow images so small text is legible to OCR
+ * 1. Upscales narrow images or downscales 4K camera photos to ~1600px width for optimal OCR
  * 2. Applies high-contrast grayscale filter
  * 3. Scans for Aadhaar QR code
  */
@@ -131,8 +131,14 @@ async function preprocessAndScan(file: File): Promise<{
       const ctx = canvas.getContext('2d');
       if (!ctx) return resolve({ processedBlob: file });
 
-      // Upscale if under 1200px width
-      const scale = Math.max(1, Math.min(2.5, 1200 / img.naturalWidth));
+      // Optimal width for Tesseract.js & jsQR is 1200-1800px
+      let scale = 1;
+      if (img.naturalWidth < 1000) {
+        scale = Math.min(2.5, 1200 / img.naturalWidth);
+      } else if (img.naturalWidth > 2000) {
+        scale = 1600 / img.naturalWidth;
+      }
+
       const targetW = Math.round(img.naturalWidth * scale);
       const targetH = Math.round(img.naturalHeight * scale);
 
@@ -272,10 +278,9 @@ export function parseAadhaarText(text: string, qrData?: ExtractedAadhaarData): E
   }
 
   // 2. Date of Birth (DOB)
-  // Handles: "26/05/2001", "26-05-2001", "2605/2001", "26/052001", "26 05 2001"
+  // Handles: "26/05/2001", "26-05-2001", "2605/2001", "26/052001", "26 05 2001", "DOB: 26/05/2001"
   if (!result.dob) {
-    // Check specific line containing DOB, Birth, aamon, etc.
-    const dobSpecificRegex = /(?:DOB|Birth|aamon|dte|Date)?[:\s/]*([0-3]?\d)[\/\-\s.]?([0-1]\d)[\/\-\s.](19\d{2}|20\d{2})/i;
+    const dobSpecificRegex = /(?:DOB|Birth|aamon|dte|Date|తేదీ)?[:\s/]*([0-3]?\d)[\/\-\s.]?([0-1]\d)[\/\-\s.](19\d{2}|20\d{2})/i;
     const match = text.match(dobSpecificRegex);
 
     if (match && match[1] && match[2] && match[3]) {
@@ -285,13 +290,11 @@ export function parseAadhaarText(text: string, qrData?: ExtractedAadhaarData): E
       result.dob = `${year}-${month}-${day}`;
       result.dobDisplay = `${day}/${month}/${year}`;
     } else {
-      // Fallback: look for 8-digit or slash patterns e.g. "2605/2001" or "26/05/2001"
       const genericMatch = text.match(/\b([0-3]\d)[./\s-]?([0-1]\d)[./\s-]?(19\d{2}|20\d{2})\b/);
       if (genericMatch && genericMatch[1] && genericMatch[2] && genericMatch[3]) {
         const day = genericMatch[1].padStart(2, '0');
         const month = genericMatch[2].padStart(2, '0');
         const year = genericMatch[3];
-        // Ensure not download date (2018, etc.) if another candidate exists
         result.dob = `${year}-${month}-${day}`;
         result.dobDisplay = `${day}/${month}/${year}`;
       }
@@ -333,7 +336,7 @@ export function parseAadhaarText(text: string, qrData?: ExtractedAadhaarData): E
     'teper', 'selly', 'roa', 'your', 'download', 'generation', 'enrolment', 'date',
     'signature', 'valid', 'unique', 'authority', 'government', 'india', 'aadhaar',
     'card', 'vid', 'help', 'male', 'female', 'birth', 'year', 'father', 'mother',
-    'address', 'phone', 'mobile', 'nagar', 'street', 'samalkot', 'samarlakota', 'godavari', 'andhra', 'pradesh'
+    'address', 'phone', 'mobile', 'nagar', 'street', 'samalkot', 'samarlakota', 'godavari', 'andhra', 'pradesh', 'to'
   ]);
 
   const cleanNameCandidate = (raw: string): string | null => {
@@ -342,10 +345,8 @@ export function parseAadhaarText(text: string, qrData?: ExtractedAadhaarData): E
     const words = cleaned.split(' ').filter(w => w.length >= 2 && !invalidNameTokens.has(w.toLowerCase()));
     if (words.length === 0) return null;
 
-    // Reject single word matches if they are less than 4 chars
     if (words.length === 1 && (words[0]?.length || 0) < 4) return null;
 
-    // Fix common OCR artifact 'Tots' -> 'Tutipati'
     if (words[0]?.toLowerCase() === 'tots') {
       words[0] = 'Tutipati';
     }
@@ -354,40 +355,55 @@ export function parseAadhaarText(text: string, qrData?: ExtractedAadhaarData): E
   };
 
   if (!result.fullName) {
-    // Strategy A: Find real DOB line (excluding Download / Generation dates)
+    // Strategy A: Find DOB line and check lines above it
     const dobIdx = lines.findIndex((l) => 
       !/Download|Generation|Issue|Print/i.test(l) &&
-      /(?:2605|DOB|Birth|aamon|dte)/i.test(l)
+      /(?:DOB|Birth|aamon|dte|తేదీ)/i.test(l)
     );
 
     if (dobIdx > 0) {
-      const candidate = lines[dobIdx - 1];
-      if (candidate) {
-        const cleaned = cleanNameCandidate(candidate);
-        if (cleaned) result.fullName = cleaned;
-      }
-    }
-
-    // Strategy B: Find line right above MALE/FEMALE (usually 2 lines above MALE)
-    if (!result.fullName) {
-      const genderIdx = lines.findIndex((l) => /\b(MALE|FEMALE)\b/i.test(l));
-      if (genderIdx >= 2) {
-        const candidate = lines[genderIdx - 2];
+      for (let offset = 1; offset <= 3 && dobIdx - offset >= 0; offset++) {
+        const candidate = lines[dobIdx - offset];
         if (candidate) {
           const cleaned = cleanNameCandidate(candidate);
-          if (cleaned) result.fullName = cleaned;
+          if (cleaned) {
+            result.fullName = cleaned;
+            break;
+          }
         }
       }
     }
 
-    // Strategy C: Check line directly above S/O
+    // Strategy B: Find line above MALE/FEMALE
     if (!result.fullName) {
-      const soIdx = lines.findIndex((l) => /(?:S\/[O0]|C\/[O0]|D\/[O0]|W\/[O0])/i.test(l));
+      const genderIdx = lines.findIndex((l) => /\b(MALE|FEMALE|పురుషుడు|స్త్రీ)\b/i.test(l));
+      if (genderIdx > 0) {
+        for (let offset = 1; offset <= 4 && genderIdx - offset >= 0; offset++) {
+          const candidate = lines[genderIdx - offset];
+          if (candidate) {
+            const cleaned = cleanNameCandidate(candidate);
+            if (cleaned) {
+              result.fullName = cleaned;
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    // Strategy C: Check lines directly above S/O
+    if (!result.fullName) {
+      const soIdx = lines.findIndex((l) => /(?:S\/[O0]|C\/[O0]|D\/[O0]|W\/[O0]|Father)/i.test(l));
       if (soIdx > 0) {
-        const candidate = lines[soIdx - 1];
-        if (candidate) {
-          const cleaned = cleanNameCandidate(candidate);
-          if (cleaned) result.fullName = cleaned;
+        for (let offset = 1; offset <= 3 && soIdx - offset >= 0; offset++) {
+          const candidate = lines[soIdx - offset];
+          if (candidate) {
+            const cleaned = cleanNameCandidate(candidate);
+            if (cleaned) {
+              result.fullName = cleaned;
+              break;
+            }
+          }
         }
       }
     }

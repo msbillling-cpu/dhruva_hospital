@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Noto+Sans+Telugu:wght@400;500;600;700&family=Noto+Serif+Telugu:wght@400;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Noto+Serif+Devanagari:wght@400;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -9,6 +9,10 @@
   --gold: #9b7745;
   --font-inter: 'Inter', system-ui, sans-serif;
   --font-playfair: 'Playfair Display', Georgia, serif;
+  --font-telugu: 'Noto Sans Telugu', 'Mandali', 'Nirmala UI', sans-serif;
+  --font-telugu-serif: 'Noto Serif Telugu', 'Suranna', Georgia, serif;
+  --font-devanagari: 'Noto Sans Devanagari', 'Nirmala UI', sans-serif;
+  --font-devanagari-serif: 'Noto Serif Devanagari', 'Rozha One', Georgia, serif;
 }
 
 * {
@@ -67,4 +71,67 @@ body {
 .text-stroke {
   -webkit-text-stroke: 1px rgba(10, 29, 22, 0.2);
   color: transparent;
+}
+
+/* ─── INDIC SCRIPT (TELUGU & HINDI) TYPOGRAPHY OVERRIDES ─── */
+/* Prevents diacritics, matras, and conjuncts from overlapping or clipping across lines */
+
+html[lang="te"], html[data-lang="te"], .lang-te {
+  font-family: var(--font-telugu), var(--font-inter), sans-serif;
+}
+
+html[lang="hi"], html[data-lang="hi"], .lang-hi {
+  font-family: var(--font-devanagari), var(--font-inter), sans-serif;
+}
+
+/* Reset letter spacing: negative letter-spacing (tracking-tight) breaks Indian conjuncts */
+html[lang="te"] *, html[data-lang="te"] *, .lang-te *,
+html[lang="hi"] *, html[data-lang="hi"] *, .lang-hi * {
+  letter-spacing: normal !important;
+}
+
+/* Headings: increase line-height and add breathing room for top matras and bottom vottulu */
+html[lang="te"] h1, html[lang="te"] h2, html[lang="te"] h3, html[lang="te"] h4,
+html[data-lang="te"] h1, html[data-lang="te"] h2, html[data-lang="te"] h3, html[data-lang="te"] h4,
+.lang-te h1, .lang-te h2, .lang-te h3, .lang-te h4,
+html[lang="hi"] h1, html[lang="hi"] h2, html[lang="hi"] h3, html[lang="hi"] h4,
+html[data-lang="hi"] h1, html[data-lang="hi"] h2, html[data-lang="hi"] h3, html[data-lang="hi"] h4,
+.lang-hi h1, .lang-hi h2, .lang-hi h3, .lang-hi h4 {
+  line-height: 1.48 !important;
+  padding-top: 0.15em;
+  padding-bottom: 0.15em;
+  overflow: visible;
+}
+
+/* Serif Headings */
+html[lang="te"] .font-serif, html[lang="te"] .font-heading,
+html[data-lang="te"] .font-serif, html[data-lang="te"] .font-heading,
+.lang-te .font-serif, .lang-te .font-heading {
+  font-family: var(--font-telugu-serif), 'Noto Serif Telugu', Georgia, serif;
+  line-height: 1.48 !important;
+}
+
+html[lang="hi"] .font-serif, html[lang="hi"] .font-heading,
+html[data-lang="hi"] .font-serif, html[data-lang="hi"] .font-heading,
+.lang-hi .font-serif, .lang-hi .font-heading {
+  font-family: var(--font-devanagari-serif), 'Noto Serif Devanagari', Georgia, serif;
+  line-height: 1.48 !important;
+}
+
+/* Paragraphs & Mission Statements */
+html[lang="te"] p, html[data-lang="te"] p, .lang-te p,
+html[lang="hi"] p, html[data-lang="hi"] p, .lang-hi p {
+  line-height: 1.78 !important;
+  padding-top: 0.05em;
+  padding-bottom: 0.05em;
+}
+
+/* Buttons & Badges: prevent vertical clipping */
+html[lang="te"] button, html[lang="te"] a,
+html[data-lang="te"] button, html[data-lang="te"] a,
+.lang-te button, .lang-te a,
+html[lang="hi"] button, html[lang="hi"] a,
+html[data-lang="hi"] button, html[data-lang="hi"] a,
+.lang-hi button, .lang-hi a {
+  line-height: 1.4 !important;
 }

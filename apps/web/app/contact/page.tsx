@@ -95,21 +95,21 @@ export default function ContactPage() {
     <div className="flex flex-col bg-[#fcfdfd]">
       
       {/* ─── 1. LUMINOUS INSTITUTIONAL HERO ─── */}
-      <section className="relative pt-36 pb-20 lg:pt-40 lg:pb-24 bg-gradient-to-b from-[#f8faf9] via-white to-[#f4f7f5] text-stone-900 border-b border-stone-200 overflow-hidden">
+      <section className="relative pt-20 sm:pt-24 lg:pt-30 pb-6 sm:pb-8 lg:pb-10 bg-gradient-to-b from-[#f8faf9] via-white to-[#f4f7f5] text-stone-900 border-b border-stone-200 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(#0a2e22_1px,transparent_1px)] [background-size:32px_32px] opacity-[0.03] pointer-events-none" />
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-          <div className="max-w-3xl mx-auto space-y-4">
+          <div className="max-w-3xl mx-auto space-y-3">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-emerald-50 border border-emerald-200 rounded-full text-[#0a2e22] text-xs font-mono font-bold uppercase tracking-wider">
               <Headphones size={14} className="text-[#9b7745]" />
               <span>{t('24/7 Patient Care Desk & Casualty', '24/7 రోగి సహాయ కేంద్రం & అత్యవసర విభాగం', '24/7 रोगी सहायता एवं आपातकालीन डेस्क')}</span>
             </div>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold text-[#0a2e22] tracking-tight leading-[1.15]">
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-serif font-bold text-[#0a2e22] tracking-tight leading-[1.2]">
               {t('Connect with Dhruva Hospitals.', 'ధృవ హాస్పిటల్స్‌ను సంప్రదించండి.', 'ध्रुव हॉस्पिटल्स से संपर्क करें।')}
             </h1>
 
-            <p className="text-base sm:text-lg text-stone-600 leading-relaxed font-normal max-w-2xl mx-auto">
+            <p className="text-sm sm:text-base text-stone-600 leading-relaxed font-normal max-w-2xl mx-auto">
               {t(
                 'Direct access to senior clinical consultants, 24/7 newborn critical care (Level-3 NICU), and immediate patient assistance at Dwaraka Nagar, Kadapa.',
                 'కడప ద్వారకా నగర్‌లో సీనియర్ వైద్య నిపుణులు, 24/7 నవజాత శిశు క్రిటికల్ కేర్ (లెవల్-3 NICU) మరియు తక్షణ రోగి సహాయ సేవలు.',
@@ -121,21 +121,21 @@ export default function ContactPage() {
       </section>
 
       {/* ─── 2. MAIN CLINICAL CONTACT & INQUIRY GRID ─── */}
-      <section className="py-16 lg:py-24 relative z-10">
+      <section className="py-8 lg:py-12 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
             
             {/* ─── LEFT COLUMN: INSTITUTIONAL CONTACT DOSSIER (5 COLS) ─── */}
-            <div className="lg:col-span-5 space-y-8">
+            <div className="lg:col-span-5 space-y-5">
               
-              <div className="space-y-2">
+              <div className="space-y-1">
                 <span className="text-[11px] font-mono font-bold uppercase tracking-[0.2em] text-[#9b7745] block">
                   {t('Direct Access Channels', 'నేరుగా సంప్రదించే మార్గాలు', 'सीधे संपर्क के माध्यम')}
                 </span>
-                <h2 className="text-3xl font-serif font-bold text-[#0a2e22] tracking-tight">
-                  {t('Contact Information', 'సంప్రదింపు సమాచారం', 'संपर्क विवरण')}
+                <h2 className="text-2xl sm:text-3xl font-serif font-bold text-[#0a2e22] tracking-tight">
+                  {t('Hospital Directory', 'సంప్రదింపు సమాచారం', 'अस्पताल निर्देशिका')}
                 </h2>
-                <p className="text-stone-600 text-sm leading-relaxed">
+                <p className="text-stone-600 text-xs sm:text-sm leading-relaxed">
                   {t(
                     'Reach our clinical teams round-the-clock for emergencies or schedule an OPD consultation during hospital hours.',
                     'అత్యవసర సేవల కోసం 24 గంటలూ లేదా ఓపీడీ కన్సల్టేషన్ల కోసం హాస్పిటల్ పని వేళల్లో సంప్రదించండి.',
@@ -145,15 +145,15 @@ export default function ContactPage() {
               </div>
 
               {/* Dossier Cards List */}
-              <div className="space-y-4">
+              <div className="space-y-3.5">
                 
                 {/* 1. Physical Location Card */}
-                <div className="p-5 sm:p-6 rounded-2xl bg-white border border-stone-200/90 shadow-sm hover:border-[#0a2e22]/30 transition-all group">
-                  <div className="flex gap-4 items-start">
-                    <div className="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-200/80 text-[#0a2e22] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                      <MapPin size={22} className="text-[#9b7745]" />
+                <div className="p-4 sm:p-5 rounded-2xl bg-white border border-stone-200/90 shadow-xs hover:border-[#0a2e22]/30 transition-all group">
+                  <div className="flex gap-3.5 items-start">
+                    <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200/80 text-[#0a2e22] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                      <MapPin size={20} className="text-[#9b7745]" />
                     </div>
-                    <div className="space-y-1.5 flex-1">
+                    <div className="space-y-1 flex-1 min-w-0">
                       <h3 className="text-sm font-serif font-bold text-[#0a2e22]">
                         {t('Hospital Campus & Address', 'హాస్పిటల్ చిరునామా', 'अस्पताल परिसर एवं पता')}
                       </h3>
@@ -163,14 +163,14 @@ export default function ContactPage() {
                       <p className="text-[11px] text-[#9b7745] font-semibold">
                         {settings?.landmark || t(contactInfo.landmark, 'రైతు బజార్ ప్రక్కన, సంధ్యా సర్కిల్, కడప RTC బస్ స్టాండ్ సమీపంలో', 'रायथू बाजार के पास, संध्या सर्किल, आरटीसी बस स्टैंड के निकट')}
                       </p>
-                      <div className="pt-2">
+                      <div className="pt-1">
                         <a 
                           href={settings?.googleMapsUrl || "https://maps.google.com/?q=Dhruva+Hospitals+Kadapa"} 
                           target="_blank" 
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-1.5 text-xs font-bold text-[#0a2e22] hover:text-[#9b7745] transition-colors"
                         >
-                          <Navigation size={13} className="text-[#9b7745]" />
+                          <Navigation size={12} className="text-[#9b7745]" />
                           <span>{t('Open in Google Maps →', 'గూగుల్ మ్యాప్స్‌లో చూడండి →', 'गूगल मैप्स पर देखें →')}</span>
                         </a>
                       </div>
@@ -179,12 +179,12 @@ export default function ContactPage() {
                 </div>
 
                 {/* 2. Emergency Helplines Card */}
-                <div className="p-5 sm:p-6 rounded-2xl bg-white border border-stone-200/90 shadow-sm hover:border-red-300 transition-all group">
-                  <div className="flex gap-4 items-start">
-                    <div className="w-12 h-12 rounded-xl bg-red-50 border border-red-200 text-red-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                      <Phone size={22} className="text-red-600" />
+                <div className="p-4 sm:p-5 rounded-2xl bg-white border border-stone-200/90 shadow-xs hover:border-red-300 transition-all group">
+                  <div className="flex gap-3.5 items-start">
+                    <div className="w-10 h-10 rounded-xl bg-red-50 border border-red-200 text-red-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                      <Phone size={20} className="text-red-600" />
                     </div>
-                    <div className="space-y-2 flex-1">
+                    <div className="space-y-2 flex-1 min-w-0">
                       <div className="flex items-center justify-between">
                         <h3 className="text-sm font-serif font-bold text-[#0a2e22]">
                           {t('24/7 Casualty & Helplines', '24/7 అత్యవసర నంబర్లు', '24/7 आपातकालीन नंबर')}
@@ -194,21 +194,21 @@ export default function ContactPage() {
                           24/7 Live
                         </span>
                       </div>
-                      <div className="space-y-1 font-mono text-xs sm:text-sm">
-                        <div className="flex items-center justify-between">
-                          <span className="text-stone-500 text-xs">Casualty Hotline:</span>
-                          <a href={`tel:${(settings?.casualtyPhone || '08562318419').replace(/\D/g, '')}`} className="font-bold text-[#0a2e22] hover:text-red-700 transition-colors">
+                      <div className="space-y-1.5 font-mono text-xs sm:text-sm">
+                        <div className="flex items-center justify-between py-1 px-2.5 rounded-lg bg-red-50/60 border border-red-100">
+                          <span className="text-stone-600 text-xs font-sans">Casualty Hotline:</span>
+                          <a href={`tel:${(settings?.casualtyPhone || '08562318419').replace(/\D/g, '')}`} className="font-bold text-red-700 hover:underline">
                             {settings?.casualtyPhone || '08562–318419'}
                           </a>
                         </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-stone-500 text-xs">Mobile & ICU:</span>
+                        <div className="flex items-center justify-between py-1 px-2.5 rounded-lg bg-stone-50 border border-stone-100">
+                          <span className="text-stone-600 text-xs font-sans">Mobile & ICU:</span>
                           <a href={`tel:${(settings?.primaryPhone || '9036852311').replace(/\D/g, '')}`} className="font-bold text-[#0a2e22] hover:text-red-700 transition-colors">
                             {settings?.primaryPhone || '9036852311'}
                           </a>
                         </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-stone-500 text-xs">Emergency Desk:</span>
+                        <div className="flex items-center justify-between py-1 px-2.5 rounded-lg bg-stone-50 border border-stone-100">
+                          <span className="text-stone-600 text-xs font-sans">Emergency Desk:</span>
                           <a href={`tel:${(settings?.secondaryPhone || '8008508384').replace(/\D/g, '')}`} className="font-bold text-[#0a2e22] hover:text-red-700 transition-colors">
                             {settings?.secondaryPhone || '8008508384'}
                           </a>
@@ -219,27 +219,29 @@ export default function ContactPage() {
                 </div>
 
                 {/* 3. Working Hours Card */}
-                <div className="p-5 sm:p-6 rounded-2xl bg-white border border-stone-200/90 shadow-sm hover:border-[#0a2e22]/30 transition-all group">
-                  <div className="flex gap-4 items-start">
-                    <div className="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-200/80 text-[#0a2e22] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                      <Clock size={22} className="text-[#9b7745]" />
+                <div className="p-4 sm:p-5 rounded-2xl bg-white border border-stone-200/90 shadow-xs hover:border-[#0a2e22]/30 transition-all group">
+                  <div className="flex gap-3.5 items-start">
+                    <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200/80 text-[#0a2e22] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                      <Clock size={20} className="text-[#9b7745]" />
                     </div>
-                    <div className="space-y-1 flex-1">
+                    <div className="space-y-2 flex-1 min-w-0">
                       <h3 className="text-sm font-serif font-bold text-[#0a2e22]">
                         {t('Clinical Operating Hours', 'క్లినికల్ పని వేళలు', 'नैदानिक ​​कार्य समय')}
                       </h3>
-                      <div className="space-y-1 text-xs sm:text-sm text-stone-700 pt-0.5">
-                        <div className="flex justify-between">
-                          <span className="text-stone-500">OPD Consultations:</span>
-                          <span className="font-semibold text-stone-900">{settings?.opdTimings || 'Mon – Sat: 9:00 AM – 8:00 PM'}</span>
+                      <div className="space-y-1.5 text-xs sm:text-sm">
+                        <div className="p-2 rounded-lg bg-stone-50 border border-stone-100 flex items-center justify-between gap-2">
+                          <span className="text-stone-600 font-medium">OPD Consultations:</span>
+                          <span className="font-semibold text-stone-900 text-right">
+                            {settings?.opdTimings ? settings.opdTimings.replace(/• Emergency: 24\/7 Round-the-Clock/i, '').trim() : 'Mon – Sat: 9:00 AM – 8:00 PM'}
+                          </span>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-stone-500">Casualty & Labour OT:</span>
-                          <span className="font-bold text-[#0a2e22]">24 Hours Round-the-Clock</span>
+                        <div className="p-2 rounded-lg bg-emerald-50/60 border border-emerald-100 flex items-center justify-between gap-2">
+                          <span className="text-emerald-900 font-medium">Casualty & Labour OT:</span>
+                          <span className="font-bold text-[#0a2e22]">24/7 Round-the-Clock</span>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-stone-500">Level-III NICU Unit:</span>
-                          <span className="font-bold text-[#0a2e22]">24 Hours Continuous Care</span>
+                        <div className="p-2 rounded-lg bg-emerald-50/60 border border-emerald-100 flex items-center justify-between gap-2">
+                          <span className="text-emerald-900 font-medium">Level-III NICU Unit:</span>
+                          <span className="font-bold text-[#0a2e22]">24/7 Continuous Care</span>
                         </div>
                       </div>
                     </div>
@@ -247,18 +249,18 @@ export default function ContactPage() {
                 </div>
 
                 {/* 4. Official Email Card */}
-                <div className="p-5 sm:p-6 rounded-2xl bg-white border border-stone-200/90 shadow-sm hover:border-[#0a2e22]/30 transition-all group">
-                  <div className="flex gap-4 items-start">
-                    <div className="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-200/80 text-[#0a2e22] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                      <Mail size={22} className="text-[#9b7745]" />
+                <div className="p-4 sm:p-5 rounded-2xl bg-white border border-stone-200/90 shadow-xs hover:border-[#0a2e22]/30 transition-all group">
+                  <div className="flex gap-3.5 items-start">
+                    <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200/80 text-[#0a2e22] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                      <Mail size={20} className="text-[#9b7745]" />
                     </div>
-                    <div className="space-y-1 flex-1">
+                    <div className="space-y-1 flex-1 min-w-0">
                       <h3 className="text-sm font-serif font-bold text-[#0a2e22]">
                         {t('Patient Concierge Email', 'పేషెంట్ కేర్ ఇమెయిల్', 'रोगी सहायता ईमेल')}
                       </h3>
                       <a 
                         href={`mailto:${settings?.email || contactInfo.email}`}
-                        className="block font-medium text-xs sm:text-sm text-[#0a2e22] hover:text-[#9b7745] transition-colors"
+                        className="block font-medium text-xs sm:text-sm text-[#0a2e22] hover:text-[#9b7745] transition-colors truncate"
                       >
                         {settings?.email || contactInfo.email}
                       </a>
@@ -301,20 +303,20 @@ export default function ContactPage() {
 
             {/* ─── RIGHT COLUMN: THE PERFECT CLINICAL INQUIRY FORM (7 COLS) ─── */}
             <div className="lg:col-span-7">
-              <div className="bg-white rounded-3xl p-8 sm:p-12 border border-stone-200 shadow-xl shadow-stone-200/50 relative overflow-hidden">
+              <div className="bg-white rounded-3xl p-6 sm:p-8 lg:p-9 border border-stone-200/90 shadow-lg shadow-stone-200/40 relative overflow-hidden">
                 
                 {/* Executive Architectural Gold Accent Bar */}
                 <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#0a2e22] via-[#9b7745] to-[#0a2e22]" />
 
-                <div className="space-y-8 relative z-10">
+                <div className="space-y-5 relative z-10">
                   
                   {/* Form Header */}
-                  <div className="space-y-2 border-b border-stone-100 pb-6">
+                  <div className="space-y-1.5 border-b border-stone-100 pb-4">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-[#0a2e22] text-[11px] font-mono font-bold uppercase tracking-wider">
                       <Stethoscope size={13} className="text-[#9b7745]" />
                       <span>{t('Patient Desk & Inquiry', 'రోగి విచారణ విభాగం', 'रोगी पूछताछ डेस्क')}</span>
                     </div>
-                    <h2 className="text-2xl sm:text-3xl font-serif font-bold text-[#0a2e22] tracking-tight">
+                    <h2 className="text-xl sm:text-2xl font-serif font-bold text-[#0a2e22] tracking-tight">
                       {t('Send a Message or Consultation Request', 'సందేశం లేదా అపాయింట్‌మెంట్ అభ్యర్థన పంపండి', 'संदेश या परामर्श अनुरोध भेजें')}
                     </h2>
                     <p className="text-stone-600 text-xs sm:text-sm leading-relaxed">
@@ -327,7 +329,7 @@ export default function ContactPage() {
                   </div>
 
                   {/* Form Element */}
-                  <form onSubmit={handleSubmit} className="space-y-6">
+                  <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
                     
                     {/* Row 1: Name & Phone */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -469,24 +471,24 @@ export default function ContactPage() {
                         {t('Clinical Concern / Message', 'సందేశం / వివరణ', 'चिकित्सीय विवरण / संदेश')}
                       </label>
                       <textarea 
-                        rows={4} 
+                        rows={3} 
                         placeholder={t(
                           'Describe symptoms, medical history, or timing requirements...',
                           'లక్షణాలు, మునుపటి వైద్య చరిత్ర లేదా సమయ వివరాలను ఇక్కడ వివరించండి...',
                           'लक्षण, पूर्व चिकित्सा इतिहास या समय संबंधी विवरण यहां साझा करें...'
                         )} 
-                        className="w-full p-4 bg-stone-50/80 border border-stone-300 rounded-xl text-stone-900 text-sm font-medium placeholder:text-stone-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0a2e22]/15 focus:border-[#0a2e22] transition-all resize-none"
+                        className="w-full p-3.5 bg-stone-50/80 border border-stone-300 rounded-xl text-stone-900 text-sm font-medium placeholder:text-stone-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0a2e22]/15 focus:border-[#0a2e22] transition-all resize-none"
                         value={formData.message}
                         onChange={e => setFormData({ ...formData, message: e.target.value })}
                       />
                     </div>
 
                     {/* Submit Button */}
-                    <div className="pt-2 space-y-3">
+                    <div className="pt-1 space-y-2.5">
                       <button 
                         type="submit" 
                         disabled={isSubmitting}
-                        className="w-full py-4.5 bg-[#0a2e22] hover:bg-[#134937] text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex items-center justify-center gap-3 text-sm sm:text-base uppercase tracking-wider group disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+                        className="w-full py-3.5 sm:py-4 bg-[#0a2e22] hover:bg-[#134937] text-white font-bold rounded-xl transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5 flex items-center justify-center gap-3 text-sm sm:text-base uppercase tracking-wider group disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
                       >
                         {isSubmitting ? (
                           <div className="flex items-center gap-2">
@@ -539,7 +541,7 @@ export default function ContactPage() {
       </section>
 
       {/* ─── 3. INTERACTIVE CAMPUS MAP & DIRECTIONS ─── */}
-      <section className="relative w-full h-[520px] bg-stone-100 border-t border-stone-200 overflow-hidden">
+      <section className="relative w-full h-[400px] lg:h-[450px] bg-stone-100 border-t border-stone-200 overflow-hidden">
         <iframe
           src={contactInfo.mapUrl}
           width="100%"

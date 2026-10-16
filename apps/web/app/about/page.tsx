@@ -9,29 +9,38 @@ import {
 } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 import { useSettings } from '@/context/SettingsContext';
-import { doctors, contactInfo, stats } from '@/lib/data';
+import { useHospitalStats } from '@/lib/useHospitalStats';
+import { doctors, contactInfo, stats as baseStats } from '@/lib/data';
 
 export default function AboutPage() {
   const { lang, t } = useLanguage();
   const { settings } = useSettings();
+  const { patientsCount, ivfDeliveries } = useHospitalStats();
+
+  const dynamicStats = [
+    { value: patientsCount, label: 'Patients Treated', teluguLabel: 'చికిత్స పొందిన రోగులు', icon: 'Users' },
+    { value: ivfDeliveries, label: 'IVF & Miracle Deliveries', teluguLabel: 'IVF విజయాలు', icon: 'HeartPulse' },
+    { value: 'Level-3', label: 'Advanced NICU & PICU', teluguLabel: 'లెవల్-3 నియోనాటల్ ICU', icon: 'Building2' },
+    { value: '24/7', label: 'Emergency & Trauma Care', teluguLabel: 'అత్యవసర & ట్రామా సేవలు', icon: 'Ambulance' },
+  ];
 
   return (
     <div className="flex flex-col bg-[#fcfbf9] text-gray-900 overflow-hidden">
       
       {/* ─── 1. ENTERPRISE HERO SECTION ─── */}
-      <section className="relative pt-36 pb-24 lg:pt-44 lg:pb-32 bg-gradient-to-b from-[#f8faf9] via-white to-[#f4f7f5] text-stone-900 border-b border-stone-200 overflow-hidden">
+      <section className="relative pt-20 sm:pt-24 lg:pt-30 pb-6 sm:pb-10 lg:pb-14 bg-gradient-to-b from-[#f8faf9] via-white to-[#f4f7f5] text-stone-900 border-b border-stone-200 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(#0a2e22_1px,transparent_1px)] [background-size:32px_32px] opacity-[0.03] pointer-events-none" />
-        <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             
             {/* Left Column (7 cols): Institutional Profile Story & Actions */}
-            <div className="lg:col-span-7 space-y-8">
-              <div className="inline-flex items-center gap-2.5 px-4 py-2 bg-emerald-50 border border-emerald-200 rounded-full text-[#0a2e22] text-xs font-mono font-bold uppercase tracking-widest animate-fade-in">
+            <div className="lg:col-span-7 space-y-5">
+              <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 bg-emerald-50 border border-emerald-200 rounded-full text-[#0a2e22] text-xs font-mono font-bold uppercase tracking-widest animate-fade-in">
                 <Building2 size={13} className="text-[#9b7745]" />
                 <span>{t('Institutional Profile & Heritage', 'సంస్థ ప్రొఫైల్ & చరిత్ర', 'संस्थागत प्रोफ़ाइल और विरासत')}</span>
               </div>
 
-              <h1 className="text-4xl sm:text-6xl lg:text-7xl font-serif font-bold text-[#0a2e22] leading-[1.08] tracking-tight">
+              <h1 className="text-3xl sm:text-5xl lg:text-5xl font-serif font-bold text-[#0a2e22] leading-[1.12] tracking-tight">
                 {t('Pioneering', 'అగ్రగామిగా', 'अग्रणी')} <br />
                 <span className="italic font-light text-[#9b7745]">
                   {t('Clinical Excellence in Kadapa.', 'కడపలో క్లినికల్ శ్రేష్ఠత.', 'कडप्पा में नैदानिक उत्कृष्टता।')}
@@ -64,7 +73,7 @@ export default function AboutPage() {
               </div>
 
               {/* Institutional Core Pillars */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 border-t border-stone-200/80">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-5 border-t border-stone-200/80">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-center text-[#0a2e22] shrink-0">
                     <CheckCircle2 size={16} className="text-[#9b7745]" />
@@ -97,64 +106,47 @@ export default function AboutPage() {
               </div>
             </div>
 
-            {/* Right Column (5 cols): Grand Hospital Architecture & Authentic Logo */}
+            {/* Right Column (5 cols): Grand Hospital Architecture in Balanced Landscape Ratio */}
             <div className="lg:col-span-5 relative">
               
               {/* Outer Decorative Glow */}
-              <div className="absolute -inset-4 bg-gradient-to-tr from-[#0a2e22]/10 via-[#9b7745]/10 to-transparent rounded-[36px] blur-2xl -z-10" />
+              <div className="absolute -inset-3 bg-gradient-to-tr from-[#0a2e22]/10 via-[#9b7745]/10 to-transparent rounded-[32px] blur-2xl -z-10" />
 
-              {/* Main Architectural Image Container */}
-              <div className="relative aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl border border-stone-200 bg-stone-100 group">
+              {/* Main Architectural Image Container (Balanced Landscape Aspect Ratio, Zero Stretch) */}
+              <div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl border border-stone-200/90 bg-stone-900 group">
                 <Image 
                   src="/exterior.jpg" 
                   alt="Dhruva Hospitals Campus Kadapa" 
                   fill 
-                  className="object-cover object-center group-hover:scale-105 transition-transform duration-700"
+                  className="object-cover object-top group-hover:scale-105 transition-transform duration-700"
                   priority
+                  sizes="(max-width: 1024px) 100vw, 40vw"
                 />
                 
-                {/* Subtle Gradient Overlays */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/30" />
+                {/* Subtle Gradient Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent pointer-events-none" />
 
-                {/* Floating Authentic Full-Color Logo Card (Top-Left) */}
-                <div className="absolute top-5 left-5 bg-white/95 backdrop-blur-md px-4 py-2.5 rounded-2xl shadow-xl border border-stone-200/80 flex items-center gap-3">
-                  <div className="relative w-32 h-10">
-                    <Image 
-                      src="/logo.png" 
-                      alt="Dhruva Hospitals Logo" 
-                      fill 
-                      className="object-contain object-left" 
-                      sizes="140px"
-                    />
-                  </div>
-                  <div className="pl-2 border-l border-stone-200 text-left">
-                    <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-[#9b7745] block">Kadapa</span>
-                    <span className="text-[10px] font-serif font-bold text-[#0a2e22]">Rayalaseema</span>
-                  </div>
-                </div>
-
-                {/* Floating Top-Right Quality Badge */}
-                <div className="absolute top-5 right-5 bg-[#0a2e22]/90 backdrop-blur-md px-3 py-1.5 rounded-full border border-[#9b7745]/40 text-[#c5a880] text-[10px] font-mono font-bold uppercase tracking-wider shadow-lg flex items-center">
+                {/* Top-Right Quality Badge */}
+                <div className="absolute top-3.5 right-3.5 bg-[#0a2e22]/90 backdrop-blur-md px-3 py-1 rounded-full border border-[#9b7745]/40 text-[#c5a880] text-[10px] font-mono font-bold uppercase tracking-wider shadow-md">
                   <span>NABH Aligned</span>
                 </div>
 
                 {/* Bottom Campus Detail Card */}
-                <div className="absolute bottom-5 left-5 right-5 bg-[#0a2e22]/95 backdrop-blur-md p-5 rounded-2xl border border-[#9b7745]/30 text-white shadow-2xl space-y-1.5">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-[#c5a880]">
-                      Hospital Campus
-                    </span>
-                    <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold text-emerald-300">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                      24/7 Emergency
-                    </span>
+                <div className="absolute bottom-3 left-3 right-3 bg-[#0a2e22]/95 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-[#9b7745]/30 text-white shadow-xl flex items-center justify-between">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                    <div className="min-w-0">
+                      <p className="font-serif font-bold text-sm text-white truncate">
+                        Dhruva Hospitals, Kadapa
+                      </p>
+                      <p className="text-[11px] text-stone-300 font-light truncate">
+                        Dwaraka Nagar • Near RTC Bus Stand
+                      </p>
+                    </div>
                   </div>
-                  <p className="font-serif font-bold text-base sm:text-lg text-white">
-                    Dhruva Hospitals, Kadapa
-                  </p>
-                  <p className="text-xs text-stone-300 font-light leading-relaxed">
-                    1/705, Dwaraka Nagar, Near RTC Bus Stand, Opp. Sandhya Circle.
-                  </p>
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-[#c5a880] shrink-0 ml-2">
+                    24/7 Casualty
+                  </span>
                 </div>
 
               </div>
@@ -166,11 +158,11 @@ export default function AboutPage() {
       </section>
 
       {/* ─── 2. ENTERPRISE KEY METRICS BANNER ─── */}
-      <section className="bg-white border-b border-emerald-900/10 py-10 px-6 lg:px-8 relative z-20">
-        <div className="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-8 divide-y lg:divide-y-0 lg:divide-x divide-emerald-900/10">
-          {stats.map((s, i) => (
-            <div key={i} className={`flex flex-col items-center text-center ${i > 0 ? 'pt-6 lg:pt-0' : ''}`}>
-              <span className="text-3xl lg:text-5xl font-heading font-bold text-emerald-950 mb-1">
+      <section className="bg-white border-b border-emerald-900/10 py-7 px-6 lg:px-8 relative z-20">
+        <div className="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-6 divide-y lg:divide-y-0 lg:divide-x divide-emerald-900/10">
+          {dynamicStats.map((s, i) => (
+            <div key={i} className={`flex flex-col items-center text-center ${i > 0 ? 'pt-5 lg:pt-0' : ''}`}>
+              <span className="text-3xl lg:text-4xl font-heading font-bold text-emerald-950 mb-0.5">
                 {s.value}
               </span>
               <span className="text-xs lg:text-sm font-semibold uppercase tracking-wider text-primary-600">
@@ -182,8 +174,8 @@ export default function AboutPage() {
       </section>
 
       {/* ─── 3. EXECUTIVE CLINICAL LEADERSHIP MESSAGE ─── */}
-      <section className="py-24 lg:py-32 px-6 lg:px-8 max-w-7xl mx-auto w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+      <section className="py-14 lg:py-18 px-6 lg:px-8 max-w-7xl mx-auto w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
           
           {/* Chairman & Founders Portraits */}
           <div className="lg:col-span-5 grid grid-cols-2 gap-4 relative">
@@ -201,7 +193,7 @@ export default function AboutPage() {
               </div>
             </div>
 
-            <div className="relative aspect-[3/4] rounded-3xl overflow-hidden shadow-2xl border border-emerald-900/10 group mt-10">
+            <div className="relative aspect-[3/4] rounded-3xl overflow-hidden shadow-2xl border border-emerald-900/10 group mt-8">
               <Image 
                 src="/doctors/dr-mounika.png" 
                 alt="Dr. S Mounika Reddy" 
@@ -217,13 +209,13 @@ export default function AboutPage() {
           </div>
 
           {/* Letter / Vision from Medical Directors */}
-          <div className="lg:col-span-7 space-y-6">
+          <div className="lg:col-span-7 space-y-5">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary-100 text-primary-700 text-xs font-bold uppercase tracking-wider">
               <HeartHandshake size={14} />
               <span>{t('Founders’ Clinical Vision', 'వ్యవస్థాపకుల క్లినికల్ విజన్', 'संस्थापकों का नैदानिक दृष्टिकोण')}</span>
             </div>
 
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-heading text-emerald-950 leading-tight">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-heading text-emerald-950 leading-tight">
               {t('A Promise of Ethical, World-Class Healthcare for Every Family.', 'ప్రతి కుటుంబానికి నైతిక, ప్రపంచ స్థాయి వైద్యం అందించే వాగ్దానం.', 'प्रत्येक परिवार के लिए नैतिक, विश्व स्तरीय स्वास्थ्य सेवा का वादा।')}
             </h2>
 
@@ -264,15 +256,15 @@ export default function AboutPage() {
       </section>
 
       {/* ─── 4. ENTERPRISE MISSION & VISION (ARCHITECTURAL LUXURY DESIGN) ─── */}
-      <section className="py-24 bg-[#f8faf9] text-stone-900 relative overflow-hidden border-y border-stone-200">
+      <section className="py-14 lg:py-18 bg-[#f8faf9] text-stone-900 relative overflow-hidden border-y border-stone-200">
         <div className="absolute inset-0 bg-[radial-gradient(#0a2e22_1px,transparent_1px)] [background-size:32px_32px] opacity-[0.03] pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
-          <div className="text-center max-w-2xl mx-auto mb-16">
-            <span className="text-[#9b7745] font-mono text-xs uppercase tracking-widest font-bold block mb-2">
+          <div className="text-center max-w-2xl mx-auto mb-10">
+            <span className="text-[#9b7745] font-mono text-xs uppercase tracking-widest font-bold block mb-1.5">
               Institutional Foundation
             </span>
-            <h2 className="text-3xl sm:text-5xl font-serif font-bold text-[#0a2e22]">
+            <h2 className="text-2xl sm:text-4xl font-serif font-bold text-[#0a2e22]">
               <span className="italic font-light text-[#9b7745]">Guided by Purpose,</span> Driven by Care
             </h2>
           </div>
@@ -341,12 +333,12 @@ export default function AboutPage() {
 
 
       {/* ─── 5. CLINICAL GOVERNANCE & PATIENT SAFETY STANDARDS ─── */}
-      <section className="py-24 lg:py-32 px-6 lg:px-8 max-w-7xl mx-auto w-full">
-        <div className="text-center max-w-3xl mx-auto mb-20">
-          <span className="text-xs font-bold uppercase tracking-widest text-primary-600 block mb-3">
+      <section className="py-14 lg:py-18 px-6 lg:px-8 max-w-7xl mx-auto w-full">
+        <div className="text-center max-w-3xl mx-auto mb-12">
+          <span className="text-xs font-bold uppercase tracking-widest text-primary-600 block mb-2">
             Quality Assurance & Governance
           </span>
-          <h2 className="text-3xl sm:text-5xl font-heading text-emerald-950 leading-tight">
+          <h2 className="text-2xl sm:text-4xl font-heading text-emerald-950 leading-snug">
             {t('Built on Trust, Rigor, and Zero Compromise.', 'నమ్మకం, క్రమశిక్షణ మరియు నాణ్యతతో నిర్మించబడింది.', 'विश्वास, कठोरता और शून्य समझौते पर निर्मित।')}
           </h2>
           <p className="text-emerald-800/70 text-base sm:text-lg mt-4 font-light">
@@ -407,15 +399,15 @@ export default function AboutPage() {
       </section>
 
       {/* ─── 6. REAL HOSPITAL INFRASTRUCTURE SHOWCASE ─── */}
-      <section className="py-24 bg-white border-y border-emerald-900/10">
+      <section className="py-14 lg:py-18 bg-white border-y border-emerald-900/10">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-6">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4">
             <div>
-              <span className="text-xs font-bold uppercase tracking-widest text-primary-600 block mb-2">
+              <span className="text-xs font-bold uppercase tracking-widest text-primary-600 block mb-1.5">
                 Tangible Clinical Infrastructure
               </span>
-              <h2 className="text-3xl sm:text-5xl font-heading text-emerald-950">
+              <h2 className="text-2xl sm:text-4xl font-heading text-emerald-950">
                 {t('Advanced Infrastructure Built for Healing.', 'వైద్యం కోసం నిర్మించబడిన అత్యాధునిక మౌలిక సదుపాయాలు.', 'उपचार के लिए निर्मित उन्नत बुनियादी ढांचा।')}
               </h2>
             </div>

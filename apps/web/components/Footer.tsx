@@ -73,7 +73,7 @@ export default function Footer() {
       </div>
 
       {/* ─── 2. MAIN INSTITUTIONAL FOOTER ─── */}
-      <div className="pt-16 pb-12">
+      <div className="pt-12 sm:pt-16 pb-24 sm:pb-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-14 pb-14 border-b border-stone-200">
@@ -314,23 +314,29 @@ export default function Footer() {
           </div>
 
           {/* ─── 4. LEGAL COMPLIANCE & ATTRIBUTION BAR ─── */}
-          <div className="pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-stone-500">
-            <div className="space-y-0.5 text-center sm:text-left">
-              <p>© {currentYear} Dhruva Hospitals, Kadapa. All rights reserved.</p>
+          <div className="pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-stone-500">
+            <div className="space-y-1 text-center md:text-left">
+              <p className="font-medium text-stone-600">© {currentYear} Dhruva Hospitals, Kadapa. All rights reserved.</p>
               <p className="text-[11px] text-stone-500">
                 Pioneering Tertiary Fertility, Obstetrics & Neonatal Care for families across Rayalaseema.
               </p>
             </div>
 
-            <div className="flex items-center gap-4 text-xs text-stone-500">
-              <Link href="/privacy" className="hover:text-stone-900 transition-colors">Privacy Policy</Link>
-              <span>•</span>
-              <Link href="/terms" className="hover:text-stone-900 transition-colors">Terms of Service</Link>
-              <span>•</span>
-              <Link href="/contact" className="hover:text-stone-900 transition-colors">Emergency Triage</Link>
-              <span>•</span>
-              <Link href="/admin" className="hover:text-[#9b7745] font-semibold transition-colors flex items-center gap-1">
-                <span>Staff Portal</span>
+            <div className="flex flex-wrap items-center justify-center md:justify-end gap-x-3 sm:gap-x-4 gap-y-1.5 text-xs text-stone-500">
+              <Link href="/privacy" className="hover:text-stone-900 transition-colors whitespace-nowrap">
+                Privacy Policy
+              </Link>
+              <span className="text-stone-300">•</span>
+              <Link href="/terms" className="hover:text-stone-900 transition-colors whitespace-nowrap">
+                Terms of Service
+              </Link>
+              <span className="text-stone-300">•</span>
+              <Link href="/contact" className="hover:text-stone-900 transition-colors whitespace-nowrap">
+                Emergency Triage
+              </Link>
+              <span className="text-stone-300">•</span>
+              <Link href="/admin" className="hover:text-[#9b7745] font-semibold transition-colors whitespace-nowrap">
+                Staff Portal
               </Link>
             </div>
           </div>

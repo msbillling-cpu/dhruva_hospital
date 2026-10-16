@@ -26,6 +26,7 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isMobileServicesOpen, setIsMobileServicesOpen] = useState(false);
   const [isLangOpen, setIsLangOpen] = useState(false);
   const pathname = usePathname();
   const { lang, setLang, t } = useLanguage();
@@ -181,19 +182,25 @@ export default function Navbar() {
               </Link>
 
               {/* Desktop Navigation Links */}
-              <div className="hidden lg:flex items-center gap-7">
+              <div className="hidden lg:flex items-center gap-4 xl:gap-7 h-full">
                 {navLinks.map((link) => (
-                  <div key={link.name} className="relative" ref={link.hasDropdown ? dropdownRef : null}>
+                  <div 
+                    key={link.name} 
+                    className="relative h-full flex items-center" 
+                    ref={link.hasDropdown ? dropdownRef : null}
+                    onMouseEnter={() => link.hasDropdown && setIsDropdownOpen(true)}
+                    onMouseLeave={() => link.hasDropdown && setIsDropdownOpen(false)}
+                  >
                     <button
                       onClick={() => link.hasDropdown && setIsDropdownOpen(!isDropdownOpen)}
-                      className={`text-sm font-semibold transition-colors flex items-center gap-1.5 py-2 group ${
+                      className={`relative text-sm font-semibold transition-colors flex items-center gap-1.5 py-2 group whitespace-nowrap ${
                         pathname === link.href ? 'text-[#0a2e22] font-bold' : 'text-stone-700 hover:text-[#0a2e22]'
                       }`}
                     >
                       {link.hasDropdown ? (
-                        <span className="cursor-pointer tracking-tight">{link.name}</span>
+                        <span className="cursor-pointer">{link.name}</span>
                       ) : (
-                        <Link href={link.href} className="tracking-tight">{link.name}</Link>
+                        <Link href={link.href}>{link.name}</Link>
                       )}
                       
                       {link.hasDropdown && (
@@ -211,29 +218,31 @@ export default function Navbar() {
 
                     {/* Services Dropdown */}
                     {link.hasDropdown && isDropdownOpen && (
-                      <div className="absolute top-[120%] left-1/2 -translate-x-1/2 w-[340px] bg-white rounded-2xl shadow-2xl border border-stone-200 p-4 z-50 animate-fade-in-up">
-                        <div className="space-y-1">
-                          {serviceCategories.map((cat) => {
-                            const Icon = IconMap[cat.icon as string] || Stethoscope;
-                            return (
-                              <Link 
-                                key={cat.id} 
-                                href={`/services/${cat.id}`}
-                                onClick={() => setIsDropdownOpen(false)}
-                                className="flex items-center gap-3.5 p-3 rounded-xl hover:bg-stone-50 transition-all group/item"
-                              >
-                                <div className="w-10 h-10 bg-emerald-50 text-[#0a2e22] rounded-xl flex items-center justify-center group-hover/item:bg-[#0a2e22] group-hover/item:text-[#c5a880] transition-colors shrink-0">
-                                  <Icon size={18} />
-                                </div>
-                                <div>
-                                  <h4 className="text-sm font-bold text-stone-900 group-hover/item:text-[#0a2e22] tracking-tight">
-                                    {t(cat.name, cat.teluguName, cat.hindiName)}
-                                  </h4>
-                                  <p className="text-[11px] text-stone-500 leading-snug line-clamp-1">{cat.description}</p>
-                                </div>
-                              </Link>
-                            );
-                          })}
+                      <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 z-50">
+                        <div className="w-[360px] bg-white rounded-2xl shadow-2xl border border-stone-200/90 p-3 transition-all duration-200">
+                          <div className="space-y-1">
+                            {serviceCategories.map((cat) => {
+                              const Icon = IconMap[cat.icon as string] || Stethoscope;
+                              return (
+                                <Link 
+                                  key={cat.id} 
+                                  href={`/services/${cat.id}`}
+                                  onClick={() => setIsDropdownOpen(false)}
+                                  className="flex items-center gap-3.5 p-2.5 rounded-xl hover:bg-stone-50 transition-all group/item"
+                                >
+                                  <div className="w-10 h-10 bg-emerald-50 text-[#0a2e22] rounded-xl flex items-center justify-center group-hover/item:bg-[#0a2e22] group-hover/item:text-[#c5a880] transition-colors shrink-0">
+                                    <Icon size={18} />
+                                  </div>
+                                  <div className="min-w-0 flex-1">
+                                    <h4 className="text-sm font-bold text-stone-900 group-hover/item:text-[#0a2e22] leading-snug">
+                                      {t(cat.name, cat.teluguName, cat.hindiName)}
+                                    </h4>
+                                    <p className="text-[11px] text-stone-500 leading-snug line-clamp-1">{cat.description}</p>
+                                  </div>
+                                </Link>
+                              );
+                            })}
+                          </div>
                         </div>
                       </div>
                     )}
@@ -258,7 +267,7 @@ export default function Navbar() {
 
                 <button
                   onClick={() => setIsModalOpen(true)}
-                  className="bg-[#0a2e22] hover:bg-[#134937] text-white px-5 sm:px-6 py-3 rounded-xl font-bold text-sm shadow-md shadow-[#0a2e22]/20 active:scale-95 transition-all flex items-center gap-2"
+                  className="bg-[#0a2e22] hover:bg-[#134937] text-white px-5 sm:px-6 py-3 rounded-xl font-bold text-sm shadow-md shadow-[#0a2e22]/20 active:scale-95 transition-all flex items-center gap-2 whitespace-nowrap shrink-0"
                 >
                   <Calendar size={16} className="text-[#c5a880]" />
                   <span>{t('Book Consultation', 'కన్సల్టేషన్ బుక్ చేయండి', 'परामर्श बुक करें')}</span>
@@ -268,14 +277,20 @@ export default function Navbar() {
               {/* Mobile Menu Toggle */}
               <div className="lg:hidden flex items-center gap-2">
                 <a
-                  href="tel:08562318419"
-                  className="w-10 h-10 rounded-xl bg-red-50 text-red-600 border border-red-200 flex items-center justify-center"
+                  href={`tel:${(settings?.casualtyPhone || '08562-318419').replace(/\D/g, '')}`}
+                  className="w-10 h-10 rounded-xl bg-red-50 text-red-600 border border-red-200 flex items-center justify-center active:scale-95 transition-transform"
                 >
                   <Phone size={18} />
                 </a>
                 <button
-                  onClick={() => setIsOpen(!isOpen)}
-                  className="w-10 h-10 rounded-xl bg-stone-100 text-stone-800 flex items-center justify-center"
+                  onClick={() => {
+                    const next = !isOpen;
+                    setIsOpen(next);
+                    setIsLangOpen(false);
+                    if (!next) setIsMobileServicesOpen(false);
+                  }}
+                  aria-label="Toggle Navigation Menu"
+                  className="w-10 h-10 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-800 flex items-center justify-center active:scale-95 transition-all"
                 >
                   {isOpen ? <X size={22} /> : <Menu size={22} />}
                 </button>
@@ -299,46 +314,75 @@ export default function Navbar() {
               }}
               className={`flex-1 flex flex-col items-center gap-1 mx-2 py-4 rounded-2xl transition-all active:scale-90 ${
                 lang === l.code 
-                ? 'bg-primary-600 text-white shadow-xl scale-105' 
+                ? 'bg-[#0a2e22] text-white shadow-xl scale-105' 
                 : 'bg-gray-50 text-gray-700 border border-gray-100'
               }`}
             >
-              <span className="text-base font-black leading-none">{l.native}</span>
+              <span className="text-base font-bold leading-none">{l.native}</span>
               <span className="text-[10px] uppercase tracking-widest opacity-70 font-bold">{l.label}</span>
             </button>
           ))}
         </div>
 
         {/* ─── MOBILE NAVIGATION MENU ─── */}
-        <div className={`lg:hidden fixed inset-x-0 top-[100%] bg-white backdrop-blur-3xl transition-all duration-500 ease-out border-b border-gray-100 shadow-2xl overflow-y-auto max-h-[calc(100vh-80px)] ${
-          isOpen ? 'translate-y-0 opacity-100 visible' : '-translate-y-10 opacity-0 invisible'
-        }`}>
-          <div className="px-8 py-12 space-y-10">
-            <div className="space-y-6">
+        <div 
+          className={`lg:hidden absolute top-full inset-x-0 bg-white border-b border-stone-200 shadow-2xl overflow-y-auto max-h-[calc(100dvh-100%)] transition-all duration-300 ease-out z-50 ${
+            isOpen ? 'translate-y-0 opacity-100 visible pointer-events-auto' : '-translate-y-4 opacity-0 invisible pointer-events-none'
+          }`}
+        >
+          <div className="px-5 py-6 space-y-5">
+            <div className="space-y-2">
               {navLinks.map((link) => (
-                <div key={link.name} className="space-y-6">
-                  <Link
-                    href={link.href}
-                    onClick={() => setIsOpen(false)}
-                    className={`block text-3xl font-black tracking-tight ${
-                      pathname === link.href ? 'text-primary-600' : 'text-primary-950'
-                    }`}
-                  >
-                    {link.name}
-                  </Link>
-                  {link.hasDropdown && (
-                    <div className="grid grid-cols-1 gap-4 pl-4">
+                <div key={link.name} className="border-b border-stone-100 pb-2.5 last:border-b-0">
+                  {link.hasDropdown ? (
+                    <button
+                      type="button"
+                      onClick={() => setIsMobileServicesOpen(!isMobileServicesOpen)}
+                      className="w-full flex items-center justify-between text-lg font-bold py-1.5 text-stone-800 hover:text-[#0a2e22] transition-colors"
+                    >
+                      <span className={pathname.startsWith('/services') ? 'text-[#0a2e22]' : ''}>
+                        {link.name}
+                      </span>
+                      <ChevronDown
+                        size={18}
+                        className={`transition-transform duration-300 text-stone-500 ${
+                          isMobileServicesOpen ? 'rotate-180 text-[#0a2e22]' : ''
+                        }`}
+                      />
+                    </button>
+                  ) : (
+                    <Link
+                      href={link.href}
+                      onClick={() => {
+                        setIsOpen(false);
+                        setIsMobileServicesOpen(false);
+                      }}
+                      className={`block text-lg font-bold py-1.5 transition-colors ${
+                        pathname === link.href ? 'text-[#0a2e22]' : 'text-stone-800 hover:text-[#0a2e22]'
+                      }`}
+                    >
+                      {link.name}
+                    </Link>
+                  )}
+
+                  {link.hasDropdown && isMobileServicesOpen && (
+                    <div className="grid grid-cols-1 gap-2 mt-2 pl-2 transition-all">
                       {serviceCategories.map((cat) => {
                         const Icon = IconMap[cat.icon as string] || Stethoscope;
                         return (
                           <Link 
                             key={cat.id} 
                             href={`/services/${cat.id}`}
-                            onClick={() => setIsOpen(false)}
-                            className="flex items-center gap-4 p-5 bg-gray-50 rounded-3xl text-xs font-black text-primary-950/70"
+                            onClick={() => {
+                              setIsOpen(false);
+                              setIsMobileServicesOpen(false);
+                            }}
+                            className="flex items-center gap-3 p-2.5 bg-stone-50 hover:bg-emerald-50/50 rounded-xl text-xs font-semibold text-stone-800 transition-colors"
                           >
-                            <Icon size={20} className="text-primary-500 shrink-0" />
-                            <span className="truncate uppercase tracking-wider">{t(cat.name, cat.teluguName, cat.hindiName)}</span>
+                            <div className="w-8 h-8 rounded-lg bg-emerald-100/70 text-[#0a2e22] flex items-center justify-center shrink-0">
+                              <Icon size={16} />
+                            </div>
+                            <span className="truncate">{t(cat.name, cat.teluguName, cat.hindiName)}</span>
                           </Link>
                         );
                       })}
@@ -348,16 +392,16 @@ export default function Navbar() {
               ))}
             </div>
             
-            <div className="pt-8 border-t border-gray-100">
+            <div className="pt-3 border-t border-stone-200">
               <button
                 onClick={() => {
                   setIsOpen(false);
                   setIsModalOpen(true);
                 }}
-                className="w-full bg-emerald-900 text-white py-6 rounded-[24px] font-black text-lg shadow-2xl flex items-center justify-center gap-4 hover:bg-emerald-800"
+                className="w-full bg-[#0a2e22] text-white py-3.5 rounded-xl font-bold text-sm shadow-lg flex items-center justify-center gap-2 hover:bg-[#134937] active:scale-[0.99] transition-all"
               >
-                <Calendar size={24} />
-                {t('Book Now', 'బుక్ చేయండి', 'बुक करें')}
+                <Calendar size={18} className="text-[#c5a880]" />
+                {t('Book Consultation', 'కన్సల్టేషన్ బుక్ చేయండి', 'परामर्श बुक करें')}
               </button>
             </div>
           </div>

@@ -14,19 +14,19 @@ export default function NeonatalPage() {
   return (
     <div className="flex flex-col bg-white">
       {/* ─── 1. LUMINOUS HERO SECTION ─── */}
-      <section className="relative pt-36 pb-24 lg:pt-44 lg:pb-32 bg-gradient-to-b from-[#f8faf9] via-white to-[#f4f7f5] text-stone-900 border-b border-stone-200 overflow-hidden">
+      <section className="relative pt-20 sm:pt-24 lg:pt-30 pb-6 sm:pb-10 lg:pb-14 bg-gradient-to-b from-[#f8faf9] via-white to-[#f4f7f5] text-stone-900 border-b border-stone-200 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(#0a2e22_1px,transparent_1px)] [background-size:32px_32px] opacity-[0.03] pointer-events-none" />
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             
             {/* Left Column */}
-            <div className="lg:col-span-7 space-y-7">
+            <div className="lg:col-span-7 space-y-5">
               <div className="inline-flex items-center px-3.5 py-1.5 bg-emerald-50 border border-emerald-200 rounded-full text-[#0a2e22] text-xs font-bold uppercase tracking-wider">
                 <span>{t('Level-III NICU & Neonatal Critical Care', 'లెవల్-III NICU క్రిటికల్ కేర్', 'स्तर-III एनआईसीयू क्रिटिकल केयर')}</span>
               </div>
 
-              <h1 className="text-4xl sm:text-6xl lg:text-7xl font-serif font-bold text-[#0a2e22] leading-[1.08] tracking-tight">
+              <h1 className="text-3xl sm:text-5xl lg:text-5xl font-serif font-bold text-[#0a2e22] leading-[1.12] tracking-tight">
                 {t('Giving Every Newborn', 'ప్రతి నవజాత శిశువుకు', 'हर नवजात शिशु को')} <br />
                 <span className="italic font-light text-[#9b7745]">
                   {t('a Strong, Safe Start.', 'బలమైన, సురక్షితమైన ఆరంభం.', 'एक मजबूत, सुरक्षित शुरुआत।')}
@@ -65,24 +65,31 @@ export default function NeonatalPage() {
               </div>
             </div>
 
-            {/* Right Column: High Definition Image Card */}
-            <div className="lg:col-span-5">
-              <div className="relative aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl border border-stone-200 bg-stone-100">
+            {/* Right Column: High Definition Image Card in Balanced Landscape Ratio */}
+            <div className="lg:col-span-5 flex justify-center lg:justify-end">
+              <div className="relative w-full max-w-lg aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl border-4 border-white bg-stone-900 group">
                 <Image
                   src="/nicu.png"
                   alt="Dhruva Hospital Level-III NICU Care"
                   fill
-                  className="object-cover object-center"
+                  className="object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
+                  sizes="(max-width: 1024px) 100vw, 420px"
                   priority
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                <div className="absolute bottom-6 left-6 right-6 text-white">
-                  <span className="text-xs uppercase tracking-widest text-[#c5a880] font-mono font-bold block mb-1">
-                    Tertiary Intensive Care
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent pointer-events-none" />
+                
+                <div className="absolute bottom-3 left-3 right-3 bg-[#0a2e22]/95 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-[#9b7745]/30 text-white shadow-xl flex items-center justify-between">
+                  <div className="min-w-0">
+                    <span className="text-[10px] uppercase tracking-widest text-[#c5a880] font-mono font-bold block mb-0.5">
+                      Tertiary Intensive Care
+                    </span>
+                    <p className="text-sm font-serif font-bold truncate">
+                      Zero-Infection Sterile NICU Suites
+                    </p>
+                  </div>
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-emerald-400 bg-[#061e16] px-2.5 py-1 rounded-lg border border-[#9b7745]/30 shrink-0 ml-2">
+                    Level-III
                   </span>
-                  <p className="text-lg font-serif font-bold">
-                    Zero-Infection Sterile NICU Suites
-                  </p>
                 </div>
               </div>
             </div>
@@ -92,14 +99,14 @@ export default function NeonatalPage() {
       </section>
 
       {/* ─── 2. NICU CLINICAL CAPABILITIES ─── */}
-      <section className="py-24 lg:py-32 bg-white border-b border-stone-200">
+      <section className="py-14 lg:py-18 bg-white border-b border-stone-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
-          <div className="max-w-3xl mb-16">
-            <div className="inline-flex items-center px-3.5 py-1.5 bg-emerald-50 border border-emerald-200 rounded-full text-[#0a2e22] text-xs font-bold uppercase tracking-wider mb-4">
+          <div className="max-w-3xl mb-10">
+            <div className="inline-flex items-center px-3.5 py-1.5 bg-emerald-50 border border-emerald-200 rounded-full text-[#0a2e22] text-xs font-bold uppercase tracking-wider mb-3">
               <span>{t('Tertiary Capabilities', 'క్లినికల్ సామర్థ్యాలు', 'नैदानिक क्षमताएं')}</span>
             </div>
-            <h2 className="text-4xl md:text-5xl font-serif font-bold text-[#0a2e22] leading-tight">
+            <h2 className="text-2xl sm:text-4xl font-serif font-bold text-[#0a2e22] leading-tight">
               {t('Advanced Neonatal', 'అధునాతన నవజాత శిశు', 'उन्नत नवजात')} <br />
               <span className="italic font-light text-[#9b7745]">
                 {t('Intensive Care Infrastructure.', 'ఇంటెన్సివ్ కేర్ మౌలిక సదుపాయాలు.', 'गहन देखभाल अवसंरचना।')}
@@ -156,14 +163,14 @@ export default function NeonatalPage() {
       </section>
 
       {/* ─── 3. PEDIATRIC & CHILD HEALTHCARE ─── */}
-      <section className="py-24 lg:py-32 bg-[#f8faf9] border-b border-stone-200">
+      <section className="py-14 lg:py-18 bg-[#f8faf9] border-b border-stone-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
-          <div className="text-center mb-16 max-w-3xl mx-auto">
-            <span className="text-[#9b7745] font-mono text-xs uppercase tracking-widest font-bold block mb-2">
+          <div className="text-center mb-10 max-w-3xl mx-auto">
+            <span className="text-[#9b7745] font-mono text-xs uppercase tracking-widest font-bold block mb-1.5">
               Continuum of Care
             </span>
-            <h2 className="text-4xl md:text-5xl font-serif font-bold text-[#0a2e22]">
+            <h2 className="text-2xl sm:text-4xl font-serif font-bold text-[#0a2e22]">
               {t('Comprehensive Child Healthcare.', 'సమగ్ర పిల్లల ఆరోగ్య సంరక్షణ.', 'व्यापक बाल स्वास्थ्य देखभाल।')}
             </h2>
             <p className="text-stone-600 mt-4 text-base md:text-lg font-normal leading-relaxed">

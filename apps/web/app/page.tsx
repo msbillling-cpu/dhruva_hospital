@@ -15,6 +15,7 @@ import {
   contactInfo, testimonials, stats 
 } from '@/lib/data';
 import { useDynamicDoctors } from '@/lib/useDynamicDoctors';
+import { useHospitalStats } from '@/lib/useHospitalStats';
 import VirtualTourSequence from '@/components/VirtualTourSequence';
 import AppointmentModal from '@/components/AppointmentModal';
 import { useSettings } from '@/context/SettingsContext';
@@ -23,10 +24,10 @@ export default function HomePage() {
   const { lang, t } = useLanguage();
   const { settings } = useSettings();
   const { doctors } = useDynamicDoctors();
+  const { patientsCount, ivfDeliveries } = useHospitalStats();
 
-  // Modal State for full appointment booking & 4K Image Lightbox
+  // Modal State for full appointment booking
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isImageViewerOpen, setIsImageViewerOpen] = useState(false);
   const [selectedDoctor, setSelectedDoctor] = useState<string | undefined>(undefined);
   const [selectedDoctorId, setSelectedDoctorId] = useState<string | undefined>(undefined);
   const [selectedSpecialty, setSelectedSpecialty] = useState<string | undefined>(undefined);
@@ -60,9 +61,9 @@ export default function HomePage() {
     setIsModalOpen(true);
   };
 
-  const openBookingForDoctor = (doc: { id?: string; name: string; specialization?: string; image?: string }) => {
+  const openBookingForDoctor = (doc: { id?: string; doctorId?: string; name: string; specialization?: string; image?: string }) => {
     setSelectedDoctor(doc.name);
-    setSelectedDoctorId(doc.id);
+    setSelectedDoctorId(doc.doctorId || doc.id);
     setSelectedSpecialty(doc.specialization);
     setSelectedProfilePic(doc.image);
     setSelectedService(undefined);
@@ -154,7 +155,9 @@ export default function HomePage() {
               </div>
               
               {/* Editorial Serif & Sans Headline */}
-              <h1 className="text-3xl sm:text-4xl lg:text-[2.85rem] text-[#0a2e22] font-serif font-bold leading-[1.14] tracking-tight">
+              <h1 className={`text-3xl sm:text-4xl lg:text-[2.85rem] text-[#0a2e22] font-serif font-bold ${
+                lang === 'en' ? 'leading-[1.14] tracking-tight' : 'leading-[1.42] tracking-normal py-1'
+              }`}>
                 {t('Advanced Medical Science.', 'అధునాతన వైద్య శాస్త్రం.', 'उन्नत चिकित्सा विज्ञान।')} <br/>
                 <span className="font-light italic text-[#9b7745] font-serif">
                   {t('Compassionate Human Care.', 'కరుణతో కూడిన సంరక్షణ.', 'करुणामय मानवीय देखभाल।')}
@@ -201,8 +204,8 @@ export default function HomePage() {
               {/* Quick Institutional Clinical Benchmarks */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-stone-200">
                 {[
-                  { num: '15,000+', lbl: t('Patients Treated', 'రోగుల చికిత్స', 'मरीजों का इलाज') },
-                  { num: '500+', lbl: t('IVF Deliveries', 'IVF విజయాలు', 'आईवीएफ प्रसव') },
+                  { num: patientsCount, lbl: t('Patients Treated', 'రోగుల చికిత్స', 'मरीजों का इलाज') },
+                  { num: ivfDeliveries, lbl: t('IVF Deliveries', 'IVF విజయాలు', 'आईवीएफ प्रसव') },
                   { num: 'Level-III', lbl: t('Advanced NICU', 'అధునాతన NICU', 'उन्नत एनआईसीयू') },
                   { num: '24/7', lbl: t('Casualty & Pharmacy', 'అత్యవసర & ఫార్మసీ', 'आपातकालीन एवं फार्मेसी') },
                 ].map((item, idx) => (
@@ -240,15 +243,6 @@ export default function HomePage() {
                       Executive Reception Desk
                     </span>
                   </div>
-
-                  <button
-                    onClick={() => setIsImageViewerOpen(true)}
-                    className="pointer-events-auto bg-black/80 hover:bg-black text-[#c5a880] hover:text-white px-3 py-1.5 rounded-xl backdrop-blur-md text-[10px] font-mono font-bold uppercase tracking-wider border border-white/20 shadow-xl flex items-center gap-1.5 transition-all cursor-pointer shrink-0"
-                    title="Open 4K Ultra HD Full Screen"
-                  >
-                    <Maximize2 size={12} />
-                    <span>4K Full Screen</span>
-                  </button>
                 </div>
 
               </div>
@@ -420,7 +414,9 @@ export default function HomePage() {
               <div className="inline-flex items-center px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-[#0a2e22] text-xs font-bold uppercase tracking-widest mb-4">
                 <span>{t('Clinical Departments & Specialties', 'క్లినికల్ విభాగాలు', 'नैदानिक विभाग')}</span>
               </div>
-              <h2 className="text-4xl md:text-5xl font-serif font-bold text-[#0a2e22] leading-tight">
+              <h2 className={`text-4xl md:text-5xl font-serif font-bold text-[#0a2e22] ${
+                lang === 'en' ? 'leading-tight' : 'leading-[1.48] py-1'
+              }`}>
                 <span className="italic font-light text-[#9b7745]">{t('Specialized Care', 'ప్రత్యేక సంరక్షణ', 'विशेष देखभाल')}</span><br/>
                 {t('For Every Phase of Life.', 'జీవితంలోని ప్రతి దశలో.', 'जीवन के हर चरण के लिए।')}
               </h2>
@@ -751,55 +747,6 @@ export default function HomePage() {
         profilePic={selectedProfilePic}
         serviceName={selectedService}
       />
-
-      {/* 4K Ultra HD Reception Image Lightbox Modal */}
-      {isImageViewerOpen && (
-        <div 
-          className="fixed inset-0 z-50 bg-black/95 backdrop-blur-xl flex flex-col justify-between p-4 sm:p-8 animate-fade-in"
-          onClick={() => setIsImageViewerOpen(false)}
-        >
-          {/* Top Bar */}
-          <div className="flex items-center justify-between z-10" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-center gap-3">
-              <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
-              <div>
-                <h3 className="text-white font-serif font-bold text-base sm:text-lg">Dhruva Hospitals Executive Reception</h3>
-                <p className="text-xs text-stone-400 font-mono">Dwaraka Nagar, Kadapa • 4K Ultra High Definition (4096 × 2900)</p>
-              </div>
-            </div>
-
-            <button
-              onClick={() => setIsImageViewerOpen(false)}
-              className="p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
-              aria-label="Close Full Screen"
-            >
-              <X size={22} />
-            </button>
-          </div>
-
-          {/* Central 4K Image (Uncropped, Full-Screen Aspect) */}
-          <div 
-            className="relative flex-1 w-full max-w-6xl mx-auto my-4 flex items-center justify-center"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="relative w-full h-full max-h-[82vh] aspect-[1024/725] mx-auto rounded-2xl overflow-hidden shadow-2xl border border-white/10">
-              <Image 
-                src="/hero-reception-4k.webp" 
-                alt="Dhruva Hospitals 4K Ultra HD Reception" 
-                fill 
-                className="object-contain" 
-                priority
-                quality={100}
-              />
-            </div>
-          </div>
-
-          {/* Bottom Bar Details */}
-          <div className="text-center text-xs text-stone-400 font-mono z-10" onClick={(e) => e.stopPropagation()}>
-            Click anywhere or press Esc to close • Official Dhruva Hospitals Healthcare Facility
-          </div>
-        </div>
-      )}
 
     </div>
   );

@@ -47,6 +47,7 @@ export function useDynamicDoctors() {
             merged.push({
               ...matchedStatic,
               id: matchedStatic.id, // keep stable id for roleBadges & styling
+              doctorId: dbDoc.doctorId, // live MongoDB ObjectId for direct ERP appointment booking
               specialization: matchedStatic.specialization || dbDoc.primarySpecialty,
               qualifications: (dbDoc.qualifications && dbDoc.qualifications.length > 0)
                 ? dbDoc.qualifications
